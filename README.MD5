@@ -1,7 +1,0 @@
-[[!ghoulSitemap? 
-&httpScheme=`https` 
-&styleURI=`/assets/sitemap.xsl`
-&priorityTv=`sitemap_priority` 
-&changefreqTv=`sitemap_changefreq`
-&priorityTemplate=`6=0.6,5=0.9,12=0.9`
-]]
