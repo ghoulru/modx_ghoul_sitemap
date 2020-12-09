@@ -3,6 +3,8 @@
  * Генератор карты сайта
  * https://support.google.com/webmasters/answer/183668?hl=ru
  *
+ * @docs https://github.com/ghoulru/modx_ghoul_sitemap
+ *
  * @version 1.0.4
  * @copyright 23/06/2020 ghoul.ru
  * 
