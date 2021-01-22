@@ -5,8 +5,8 @@
  *
  * @docs https://github.com/ghoulru/modx_ghoul_sitemap
  *
- * @version 1.0.4
- * @copyright 23/06/2020 ghoul.ru
+ * @version 1.0.6
+ * @copyright 22/01/2021 ghoul.ru
  * 
  * Параметры вызова сниппета
  * значения отмеченные * - по умолчанию
@@ -41,7 +41,8 @@ $tblPrefix = $modx->getOption(xPDO::OPT_TABLE_PREFIX);
 $siteStartPageId = $modx->getOption('site_start', null, 1);
 
 global $showLastmod;
-$showLastmod = isset($noLastmod) ? intval($noLastmod) : 1;
+$showLastmod = (!isset($noLastmod) || !intval($noLastmod));
+
 
 $siteURL = (
 	isset($httpScheme)
@@ -78,11 +79,21 @@ if (isset($priorityTemplate) && trim($priorityTemplate) != '') {
 	$tmp = explode(',', trim($priorityTemplate, ' `'));
 	
 	foreach ($tmp as $item) {
-		list($k, $v) = explode('=', trim($item));
+		list($k, $v) = explode('=', trim($item), 2);
 		$priorityForTemplate[ $k ] = $v;
 	}
 }
+$changefreqForTemplate = [];
+if (isset($changefreqTamplate) && trim($changefreqTamplate) != '') {
+	$tmp = explode(',', trim($changefreqTamplate, ' `'));
+
+	foreach ($tmp as $item) {
+		list($k, $v) = explode('=', trim($item), 2);
+		$changefreqForTemplate[ $k ] = $v;
+	}
+}
 //print_r($priorityForTemplate);
+//print_r($changefreqForTemplate);
 
 $siteContent = [];
 
@@ -206,7 +217,9 @@ if (!empty($siteContent)) {
 		
 		if (isset($contentTvValues[ $id ][ 'changefreq' ]))
 			$changefreq = $contentTvValues[ $id ][ 'changefreq' ];
-		elseif ($changefreqDefault)
+		elseif (isset($changefreqForTemplate[ $itemContent['template'] ]))
+			$changefreq = $changefreqForTemplate[ $itemContent['template'] ];
+		elseif (isset($changefreqDefault))
 			$changefreq = $defaultChangefreq;
 		else {
 			if ($itemContent['editedon'] >= GHOUL_SM_EDITED_HOUR)
@@ -273,8 +286,8 @@ if (!empty($siteContent)) {
 		if ($itemContent['id'] == $siteStartPageId) {
 			
 			$d['url']   = $siteURL;
-			$d['changefreq'] = isset($contentTvValues[ $id ][ 'changefreq' ]) ? $contentTvValues[ $id ][ 'changefreq' ] : 'daily';
-			$d['priority'] = isset($contentTvValues[ $id ][ 'priority' ]) ? $contentTvValues[ $id ][ 'priority' ] : '1.0';
+			$d['changefreq'] = $changefreq;//isset($contentTvValues[ $id ][ 'changefreq' ]) ? $contentTvValues[ $id ][ 'changefreq' ] : 'daily';
+			$d['priority'] = $priority;//isset($contentTvValues[ $id ][ 'priority' ]) ? $contentTvValues[ $id ][ 'priority' ] : '1.0';
 			
 			$indexPage = $d;
 		}
